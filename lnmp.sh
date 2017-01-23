@@ -18,60 +18,61 @@ mysql_prefix='/usr/local/mysql'
 
 install_init(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r\n";
-#    yum update -y
-#    yum install -y epel-release \
-#        wget \
-#        libmcrypt \
-#        libmcrypt-devel \
-#        mcrypt \
-#        mhash \
-#        lrzsz \
-#        gcc \
-#        gcc-c++ \
-#        autoconf \
-#        libjpeg \
-#        libjpeg-devel \
-#        libpng \
-#        libpng-devel \
-#        freetype \
-#        freetype-devel \
-#        libxml2 \
-#        libxml2-devel \
-#        zlib \
-#        zlib-devel \
-#        glibc \
-#        glibc-devel \
-#        glib2 \
-#        glib2-devel \
-#        bzip2 \
-#        bzip2-devel \
-#        ncurses \
-#        ncurses-devel \
-#        curl \
-#        curl-devel \
-#        e2fsprogs \
-#        e2fsprogs-devel \
-#        krb5 \
-#        krb5-devel \
-#        libidn \
-#        libidn-devel \
-#        openssl \
-#        openssl-devel \
-#        openldap \
-#        openldap-devel \
-#        nss_ldap \
-#        openldap-clients \
-#        openldap-servers \
-#        gd \
-#        gd2 \
-#        gd-devel \
-#        gd2-devel \
-#        perl-CPAN \
-#        pcre-devel \
-#        libmcrypt \
-#        libmcrypt-devel \
-#        mcrypt \
-#        mhash
+    yum update -y
+    yum install -y epel-release \
+        wget \
+        libmcrypt \
+        libmcrypt-devel \
+        mcrypt \
+        mhash \
+        lrzsz \
+        gcc \
+        gcc-c++ \
+        autoconf \
+        libjpeg \
+        libjpeg-devel \
+        libpng \
+        libpng-devel \
+        freetype \
+        freetype-devel \
+        libxml2 \
+        libxml2-devel \
+        zlib \
+        zlib-devel \
+        glibc \
+        glibc-devel \
+        glib2 \
+        glib2-devel \
+        bzip2 \
+        bzip2-devel \
+        ncurses \
+        ncurses-devel \
+        curl \
+        curl-devel \
+        e2fsprogs \
+        e2fsprogs-devel \
+        krb5 \
+        krb5-devel \
+        libidn \
+        libidn-devel \
+        openssl \
+        openssl-devel \
+        openldap \
+        openldap-devel \
+        nss_ldap \
+        openldap-clients \
+        openldap-servers \
+        gd \
+        gd2 \
+        gd-devel \
+        gd2-devel \
+        perl-CPAN \
+        pcre-devel \
+        libmcrypt \
+        libmcrypt-devel \
+        mcrypt \
+        git \
+        mhash
 
     if [ ! -d "${source_download_path}" ]; then
         `mkdir ${source_download_path}`
@@ -92,13 +93,11 @@ install_nginx(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r\n";
     nginx_dir=`basename ${nginx_source} | sed -r 's/^(.*)\..*$/\1/g' | sed -r 's/^(.*)\..*$/\1/g'`
     cd ${source_download_path}
-#    wget -C nginx.tar.gz ${nginx_source}
-#    tar -zvx -f nginx.tar.gz
-#    cd ${source_download_path}/${nginx_dir}
-#    ./configure --prefix=${nginx_prefix} && make && make install
+    wget -C nginx.tar.gz ${nginx_source}
+    tar -zvx -f nginx.tar.gz
+    cd ${source_download_path}/${nginx_dir}
+    ./configure --prefix=${nginx_prefix} && make && make install
     echo "export PATH=/usr/local/nginx/sbin:"'$PATH' >> ${custom_setting_file}
-    echo "export PATH=${php_prefix}/bin:"'$PATH' >> ${custom_setting_file}
-    echo "export PATH=${php_prefix}/sbin:"'$PATH' >> ${custom_setting_file}
     source /etc/profile
 
     restart_nginx
@@ -112,42 +111,42 @@ install_php(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r\n";
     cd ${source_download_path}
     php_dir=`basename ${php_source} | sed -r 's/^(.*)\..*$/\1/g' | sed -r 's/^(.*)\..*$/\1/g'`
-#    `wget -O php.tar.gz ${php_source}`
-#    `tar -zvx  -f php.tar.gz`
-#    cd ${source_download_path}/${php_dir}
-#    ./configure --prefix=${php_prefix} --with-config-file-path=/etc/php \
-#        --enable-fpm \
-#        --enable-pcntl \
-#        --enable-mysqlnd \
-#        --enable-opcache \
-#        --enable-sockets \
-#        --enable-sysvmsg \
-#        --enable-sysvsem \
-#        --enable-sysvshm \
-#        --enable-shmop \
-#        --enable-zip \
-#        --enable-ftp \
-#        --enable-soap \
-#        --enable-xml \
-#        --enable-mbstring \
-#        --disable-rpath \
-#        --disable-debug \
-#        --disable-fileinfo \
-#        --with-mysql=mysqlnd \
-#        --with-mysqli=mysqlnd \
-#        --with-pdo-mysql=mysqlnd \
-#        --with-pcre-regex \
-#        --with-iconv \
-#        --with-zlib \
-#        --with-mcrypt \
-#        --with-gd \
-#        --with-openssl \
-#        --with-mhash \
-#        --with-xmlrpc \
-#        --with-curl \
-#        --with-imap-ssl && make && make install
-#    echo "export PATH=${php_prefix}/bin:"'$PATH' >> /etc/profile
-#    echo "export PATH=${php_prefix}/sbin:"'$PATH' >> /etc/profile
+    `wget -O php.tar.gz ${php_source}`
+    `tar -zvx  -f php.tar.gz`
+    cd ${source_download_path}/${php_dir}
+    ./configure --prefix=${php_prefix} --with-config-file-path=/etc/php \
+        --enable-fpm \
+        --enable-pcntl \
+        --enable-mysqlnd \
+        --enable-opcache \
+        --enable-sockets \
+        --enable-sysvmsg \
+        --enable-sysvsem \
+        --enable-sysvshm \
+        --enable-shmop \
+        --enable-zip \
+        --enable-ftp \
+        --enable-soap \
+        --enable-xml \
+        --enable-mbstring \
+        --disable-rpath \
+        --disable-debug \
+        --disable-fileinfo \
+        --with-mysql=mysqlnd \
+        --with-mysqli=mysqlnd \
+        --with-pdo-mysql=mysqlnd \
+        --with-pcre-regex \
+        --with-iconv \
+        --with-zlib \
+        --with-mcrypt \
+        --with-gd \
+        --with-openssl \
+        --with-mhash \
+        --with-xmlrpc \
+        --with-curl \
+        --with-imap-ssl && make && make install
+    echo "export PATH=${php_prefix}/bin:"'$PATH' >> ${custom_setting_file}
+    echo "export PATH=${php_prefix}/sbin:"'$PATH' >> ${custom_setting_file}
     source /etc/profile
     if [ ! -d "/etc/php" ]; then
         `mkdir /etc/php`
@@ -183,7 +182,7 @@ install_php_extend_swoole(){
         mkdir ${source_download_path}/php_swoole
     fi
     php_swoole_dir=`basename ${php_ext_swoole_source} | sed -r 's/^(.*)\..*$/\1/g' | sed -r 's/^(.*)\..*$/\1/g' `
-#    `wget -O php_swoole.tar.gz ${php_ext_swoole_source}`
+    `wget -O php_swoole.tar.gz ${php_ext_swoole_source}`
     `tar -zvx -C ${source_download_path}/php_swoole -f php_swoole.tar.gz`
     cd ${source_download_path}/php_swoole
     swoole_src_dir=`ls`
@@ -264,11 +263,11 @@ restart_nginx(){
 }
 
 install_init
-#install_nginx
-#install_php
-#install_php_extend_redis
-#install_php_extend_swoole
-#install_php_extend_igbinary
-#install_php_extend_memcache
-#install_php_extend_mongo
-#install_php_extend_mongodb
+install_nginx
+install_php
+install_php_extend_redis
+install_php_extend_swoole
+install_php_extend_igbinary
+install_php_extend_memcache
+install_php_extend_mongo
+install_php_extend_mongodb
