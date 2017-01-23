@@ -87,6 +87,11 @@ install_init(){
 fi" >> /etc/profile
 
     echo 'echo -e "\r\n\E[1;33m load '${custom_setting_file}' file.\E[0m\r\n";' >> ${custom_setting_file}
+    echo '`git config --global alias.co checkout`
+ `git config --global alias.br branch`
+ `git config --global alias.cm commit`
+ `git config --global alias.st status`' >> ${custom_setting_file}
+ 
 }
 
 install_nginx(){
