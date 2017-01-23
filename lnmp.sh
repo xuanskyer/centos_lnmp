@@ -91,7 +91,7 @@ fi" >> /etc/profile
  `git config --global alias.br branch`
  `git config --global alias.cm commit`
  `git config --global alias.st status`' >> ${custom_setting_file}
- 
+
 }
 
 install_nginx(){
@@ -104,7 +104,8 @@ install_nginx(){
     ./configure --prefix=${nginx_prefix} && make && make install
     echo "export PATH=/usr/local/nginx/sbin:"'$PATH' >> ${custom_setting_file}
     source /etc/profile
-
+    nginx_conf_line_count=`cat ${nginx_prefix}/conf/nginx.conf | wc -l`
+    sed "${nginx_conf_line_count} iinclude  vhost/*.conf;" -i ${nginx_prefix}/conf/nginx.conf
     restart_nginx
 }
 
@@ -267,12 +268,12 @@ restart_nginx(){
     /usr/local/nginx/sbin/nginx -s reload
 }
 
-install_init
+#install_init
 install_nginx
-install_php
-install_php_extend_redis
-install_php_extend_swoole
-install_php_extend_igbinary
-install_php_extend_memcache
-install_php_extend_mongo
-install_php_extend_mongodb
+#install_php
+#install_php_extend_redis
+#install_php_extend_swoole
+#install_php_extend_igbinary
+#install_php_extend_memcache
+#install_php_extend_mongo
+#install_php_extend_mongodb
