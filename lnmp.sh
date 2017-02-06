@@ -1,6 +1,9 @@
 #!/bin/bash
+
+# 变量配置列表
 profile_path='/etc/profile'
 custom_setting_file='/etc/my_custom_profile'
+# 软件源列表
 nginx_source='http://nginx.org/download/nginx-1.8.1.tar.gz'
 mysql_source='https://mirrors.tuna.tsinghua.edu.cn/mariadb//mariadb-10.1.21/source/mariadb-10.1.21.tar.gz'
 php_source='http://cn2.php.net/distributions/php-5.6.30.tar.gz'
@@ -11,9 +14,13 @@ php_ext_swoole_source='https://github.com/swoole/swoole-src/archive/v1.9.2-stabl
 php_ext_mongo_source='http://pecl.php.net/get/mongo-1.6.13.tgz'
 php_ext_mongodb_source='http://pecl.php.net/get/mongodb-1.1.5.tgz'
 
+# 软件包下载路径
 source_download_path='/tmp/lnmp-tmp'
+# nginx 安装路径
 nginx_prefix='/usr/local/nginx'
+# php 安装路径
 php_prefix='/usr/local/php'
+# mysql安装路径
 mysql_prefix='/usr/local/mysql'
 
 install_info(){
@@ -295,6 +302,7 @@ install_php_extend_mongo(){
     fi
     restart_php_fpm
 }
+
 install_php_extend_mongodb(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
     cd ${source_download_path}
@@ -329,13 +337,24 @@ restart_nginx(){
     /usr/local/nginx/sbin/nginx -s reload
 }
 
+######### 执行列表 ############
+# 安装软件列表说明
 install_info
+# 安装前系统初始化更新
 install_init
+# 安装nginx
 install_nginx
+# 安装php
 install_php
+# 安装php扩展：redis
 install_php_extend_redis
+# 安装php扩展：swoole
 install_php_extend_swoole
+# 安装php扩展：igbinary
 install_php_extend_igbinary
+# 安装php扩展：memcache
 install_php_extend_memcache
+# 安装php扩展：mongo
 install_php_extend_mongo
+# 安装php扩展：mongodb
 install_php_extend_mongodb
