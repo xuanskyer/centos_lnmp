@@ -315,9 +315,9 @@ restart_nginx(){
 install_init
 install_nginx
 install_php
-#install_php_extend_redis
-#install_php_extend_swoole
-#install_php_extend_igbinary
-#install_php_extend_memcache
-#install_php_extend_mongo
-#install_php_extend_mongodb
+install_php_extend_redis
+install_php_extend_swoole
+install_php_extend_igbinary
+install_php_extend_memcache
+install_php_extend_mongo
+install_php_extend_mongodb
