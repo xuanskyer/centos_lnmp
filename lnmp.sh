@@ -18,6 +18,7 @@ mysql_prefix='/usr/local/mysql'
 
 install_init(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r\n";
+
     yum update -y
     yum install -y epel-release \
         wget \
@@ -86,12 +87,11 @@ install_init(){
         . ${custom_setting_file}
 fi" >> /etc/profile
 
-    echo 'echo -e "\r\n\E[1;33m load '${custom_setting_file}' file.\E[0m\r\n";' >> ${custom_setting_file}
-    echo '`git config --global alias.co checkout`
- `git config --global alias.br branch`
- `git config --global alias.cm commit`
- `git config --global alias.st status`' >> ${custom_setting_file}
-
+    desc_content='echo -e "\\r\\n\\E[1;33m load '${custom_setting_file}' file.\\E[0m\\r\\n";'
+    desc_count=`cat ${custom_setting_file} | grep 'load /etc/my_custom_profile' | wc -l`
+    if [ ${desc_count} -le 0 ]; then
+        `echo -e ${desc_content} >> ${custom_setting_file}`
+    fi
 }
 
 install_nginx(){
@@ -102,7 +102,13 @@ install_nginx(){
     tar -zvx -f nginx.tar.gz
     cd ${source_download_path}/${nginx_dir}
     ./configure --prefix=${nginx_prefix} && make && make install
-    echo "export PATH=/usr/local/nginx/sbin:"'$PATH' >> ${custom_setting_file}
+
+
+    nginx_sbin_count=`cat ${custom_setting_file} | grep "export PATH=/usr/local/nginx/sbin:"'$PATH' | wc -l`
+
+    if [ ${nginx_sbin_count} -le 0 ]; then
+        echo "export PATH=/usr/local/nginx/sbin:"'$PATH' >> ${custom_setting_file}
+    fi
     source /etc/profile
     include_count=`cat /usr/local/nginx/conf/nginx.conf | grep 'include[ ]*vhost/\*.conf' | wc -l`
     if [ ${include_count} -le 0 ]; then
@@ -118,6 +124,7 @@ install_mysql(){
 
 install_php(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r\n";
+
     cd ${source_download_path}
     php_dir=`basename ${php_source} | sed -r 's/^(.*)\..*$/\1/g' | sed -r 's/^(.*)\..*$/\1/g'`
     `wget -O php.tar.gz ${php_source}`
@@ -154,8 +161,19 @@ install_php(){
         --with-xmlrpc \
         --with-curl \
         --with-imap-ssl && make && make install
-    echo "export PATH=${php_prefix}/bin:"'$PATH' >> ${custom_setting_file}
-    echo "export PATH=${php_prefix}/sbin:"'$PATH' >> ${custom_setting_file}
+
+
+    php_bin_count=`cat ${custom_setting_file} | grep "export PATH=${php_prefix}/bin:"'$PATH' | wc -l`
+
+    if [ ${php_bin_count} -le 0 ]; then
+        echo "export PATH=${php_prefix}/bin:"'$PATH' >> ${custom_setting_file}
+    fi
+    php_sbin_count=`cat ${custom_setting_file} | grep "export PATH=${php_prefix}/sbin:"'$PATH' | wc -l`
+
+    if [ ${php_sbin_count} -le 0 ]; then
+        echo "export PATH=${php_prefix}/sbin:"'$PATH' >> ${custom_setting_file}
+    fi
+
     source /etc/profile
     if [ ! -d "/etc/php" ]; then
         `mkdir /etc/php`
@@ -179,7 +197,11 @@ install_php_extend_redis(){
     cd ${source_download_path}/${php_redis_dir}
     source /etc/profile
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
-    echo "extension=redis.so" >> /etc/php/php.ini
+
+    redis_so_count=`cat /etc/php/php.ini | grep 'extension=redis.so' | wc -l`
+    if [ ${redis_so_count} -le 0 ]; then
+        echo "extension=redis.so" >> /etc/php/php.ini
+    fi
 
     restart_php_fpm
 }
@@ -197,7 +219,10 @@ install_php_extend_swoole(){
     swoole_src_dir=`ls`
     cd ${source_download_path}/php_swoole/${swoole_src_dir}
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
-    echo "extension=swoole.so" >> /etc/php/php.ini
+    swoole_so_count=`cat /etc/php/php.ini | grep 'extension=swoole.so' | wc -l`
+    if [ ${swoole_so_count} -le 0 ]; then
+        echo "extension=swoole.so" >> /etc/php/php.ini
+    fi
     source /etc/profile
 
     restart_php_fpm
@@ -212,7 +237,11 @@ install_php_extend_igbinary(){
     cd ${source_download_path}/${php_igbinary_dir}
     source /etc/profile
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
-    echo "extension=igbinary.so" >> /etc/php/php.ini
+
+    igbinary_so_count=`cat /etc/php/php.ini | grep 'extension=igbinary.so' | wc -l`
+    if [ ${igbinary_so_count} -le 0 ]; then
+        echo "extension=igbinary.so" >> /etc/php/php.ini
+    fi
     restart_php_fpm
 }
 
@@ -225,7 +254,11 @@ install_php_extend_memcache(){
     cd ${source_download_path}/${php_memcache_dir}
     source /etc/profile
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
-    echo "extension=memcache.so" >> /etc/php/php.ini
+
+    memcache_so_count=`cat /etc/php/php.ini | grep 'extension=memcache.so' | wc -l`
+    if [ ${memcache_so_count} -le 0 ]; then
+        echo "extension=memcache.so" >> /etc/php/php.ini
+    fi
     restart_php_fpm
 }
 
@@ -238,7 +271,11 @@ install_php_extend_mongo(){
     cd ${source_download_path}/${php_mongo_dir}
     source /etc/profile
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
-    echo "extension=mongo.so" >> /etc/php/php.ini
+
+    mongo_so_count=`cat /etc/php/php.ini | grep 'extension=mongo.so' | wc -l`
+    if [ ${mongo_so_count} -le 0 ]; then
+        echo "extension=mongo.so" >> /etc/php/php.ini
+    fi
     restart_php_fpm
 }
 install_php_extend_mongodb(){
@@ -250,7 +287,11 @@ install_php_extend_mongodb(){
     cd ${source_download_path}/${php_mongodb_dir}
     source /etc/profile
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
-    echo "extension=mongodb.so" >> /etc/php/php.ini
+
+    mongodb_so_count=`cat /etc/php/php.ini | grep 'extension=mongodb.so' | wc -l`
+    if [ ${mongodb_so_count} -le 0 ]; then
+        echo "extension=mongodb.so" >> /etc/php/php.ini
+    fi
     restart_php_fpm
 }
 
@@ -274,9 +315,9 @@ restart_nginx(){
 install_init
 install_nginx
 install_php
-install_php_extend_redis
-install_php_extend_swoole
-install_php_extend_igbinary
-install_php_extend_memcache
-install_php_extend_mongo
-install_php_extend_mongodb
+#install_php_extend_redis
+#install_php_extend_swoole
+#install_php_extend_igbinary
+#install_php_extend_memcache
+#install_php_extend_mongo
+#install_php_extend_mongodb
