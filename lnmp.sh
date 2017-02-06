@@ -1,5 +1,5 @@
 #!/bin/bash
-
+profile_path='/etc/profile'
 custom_setting_file='/etc/my_custom_profile'
 nginx_source='http://nginx.org/download/nginx-1.8.1.tar.gz'
 mysql_source='https://mirrors.tuna.tsinghua.edu.cn/mariadb//mariadb-10.1.21/source/mariadb-10.1.21.tar.gz'
@@ -15,6 +15,19 @@ source_download_path='/tmp/lnmp-tmp'
 nginx_prefix='/usr/local/nginx'
 php_prefix='/usr/local/php'
 mysql_prefix='/usr/local/mysql'
+
+install_info(){
+    echo -e "\r\n\E[1;33m=============安装列表===============\E[1;33m";
+    echo -e "\E[1;33m=  nginx          : 1.8.1          =\E[1;33m";
+    echo -e "\E[1;33m=  php            : 5.6.30         =\E[1;33m";
+    echo -e "\E[1;33m=  php-redis      : 2.2.7          =\E[1;33m";
+    echo -e "\E[1;33m=  php-memcache   : 2.2.7          =\E[1;33m";
+    echo -e "\E[1;33m=  php-igbinary   : 1.2.1          =\E[1;33m";
+    echo -e "\E[1;33m=  php-swoole     : v1.9.2-stable  =\E[1;33m";
+    echo -e "\E[1;33m=  php-mongo      : 1.6.13         =\E[1;33m";
+    echo -e "\E[1;33m=  php-mongodb    : 1.1.5          =\E[1;33m";
+    echo -e "\E[1;33m====================================\r\n\E[1;33m";
+}
 
 install_init(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r\n";
@@ -83,9 +96,13 @@ install_init(){
         touch ${custom_setting_file}
     fi
 
-    echo "if [ -f ${custom_setting_file} ]; then
-        . ${custom_setting_file}
-fi" >> /etc/profile
+    profile_count=`cat ${profile_path} | grep '/etc/my_custom_profile' | wc -l`
+    if [ ${profile_count} -le 0 ]; then
+        echo "#加载自定义配置文件" >> ${profile_path}
+        echo "if [ -f ${custom_setting_file} ]; then
+    . ${custom_setting_file}
+fi" >> ${profile_path}
+    fi
 
     desc_content='echo -e "\\r\\n\\E[1;33m load '${custom_setting_file}' file.\\E[0m\\r\\n";'
     desc_count=`cat ${custom_setting_file} | grep 'load /etc/my_custom_profile' | wc -l`
@@ -109,7 +126,7 @@ install_nginx(){
     if [ ${nginx_sbin_count} -le 0 ]; then
         echo "export PATH=/usr/local/nginx/sbin:"'$PATH' >> ${custom_setting_file}
     fi
-    source /etc/profile
+    source ${profile_path}
     include_count=`cat /usr/local/nginx/conf/nginx.conf | grep 'include[ ]*vhost/\*.conf' | wc -l`
     if [ ${include_count} -le 0 ]; then
         nginx_conf_line_count=`cat ${nginx_prefix}/conf/nginx.conf | wc -l`
@@ -174,7 +191,7 @@ install_php(){
         echo "export PATH=${php_prefix}/sbin:"'$PATH' >> ${custom_setting_file}
     fi
 
-    source /etc/profile
+    source ${profile_path}
     if [ ! -d "/etc/php" ]; then
         `mkdir /etc/php`
     fi
@@ -195,7 +212,7 @@ install_php_extend_redis(){
     `wget -O php_redis.tar.gz ${php_ext_redis_source}`
     `tar -zvx  -f php_redis.tar.gz`
     cd ${source_download_path}/${php_redis_dir}
-    source /etc/profile
+    source ${profile_path}
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
 
     redis_so_count=`cat /etc/php/php.ini | grep 'extension=redis.so' | wc -l`
@@ -223,7 +240,7 @@ install_php_extend_swoole(){
     if [ ${swoole_so_count} -le 0 ]; then
         echo "extension=swoole.so" >> /etc/php/php.ini
     fi
-    source /etc/profile
+    source ${profile_path}
 
     restart_php_fpm
 }
@@ -235,7 +252,7 @@ install_php_extend_igbinary(){
     `wget -O php_igbinary.tgz ${php_ext_igbinary_source}`
     `tar -zvx  -f php_igbinary.tgz`
     cd ${source_download_path}/${php_igbinary_dir}
-    source /etc/profile
+    source ${profile_path}
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
 
     igbinary_so_count=`cat /etc/php/php.ini | grep 'extension=igbinary.so' | wc -l`
@@ -252,7 +269,7 @@ install_php_extend_memcache(){
     `wget -O php_memcache.tgz ${php_ext_memcache_source}`
     `tar -zvx  -f php_memcache.tgz`
     cd ${source_download_path}/${php_memcache_dir}
-    source /etc/profile
+    source ${profile_path}
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
 
     memcache_so_count=`cat /etc/php/php.ini | grep 'extension=memcache.so' | wc -l`
@@ -269,7 +286,7 @@ install_php_extend_mongo(){
     `wget -O php_mongo.tgz ${php_ext_mongo_source}`
     `tar -zvx  -f php_mongo.tgz`
     cd ${source_download_path}/${php_mongo_dir}
-    source /etc/profile
+    source ${profile_path}
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
 
     mongo_so_count=`cat /etc/php/php.ini | grep 'extension=mongo.so' | wc -l`
@@ -285,7 +302,7 @@ install_php_extend_mongodb(){
     `wget -O php_mongodb.tgz ${php_ext_mongodb_source}`
     `tar -zvx  -f php_mongodb.tgz`
     cd ${source_download_path}/${php_mongodb_dir}
-    source /etc/profile
+    source ${profile_path}
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
 
     mongodb_so_count=`cat /etc/php/php.ini | grep 'extension=mongodb.so' | wc -l`
@@ -312,6 +329,7 @@ restart_nginx(){
     /usr/local/nginx/sbin/nginx -s reload
 }
 
+install_info
 install_init
 install_nginx
 install_php
