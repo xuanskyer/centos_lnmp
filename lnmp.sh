@@ -98,14 +98,17 @@ install_nginx(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r\n";
     nginx_dir=`basename ${nginx_source} | sed -r 's/^(.*)\..*$/\1/g' | sed -r 's/^(.*)\..*$/\1/g'`
     cd ${source_download_path}
-    wget -C nginx.tar.gz ${nginx_source}
+    wget -O nginx.tar.gz ${nginx_source}
     tar -zvx -f nginx.tar.gz
     cd ${source_download_path}/${nginx_dir}
     ./configure --prefix=${nginx_prefix} && make && make install
     echo "export PATH=/usr/local/nginx/sbin:"'$PATH' >> ${custom_setting_file}
     source /etc/profile
-    nginx_conf_line_count=`cat ${nginx_prefix}/conf/nginx.conf | wc -l`
-    sed "${nginx_conf_line_count} iinclude  vhost/*.conf;" -i ${nginx_prefix}/conf/nginx.conf
+    include_count=`cat /usr/local/nginx/conf/nginx.conf | grep 'include[ ]*vhost/\*.conf' | wc -l`
+    if [ ${include_count} -le 0 ]; then
+        nginx_conf_line_count=`cat ${nginx_prefix}/conf/nginx.conf | wc -l`
+        sed "${nginx_conf_line_count} iinclude  vhost/*.conf;" -i ${nginx_prefix}/conf/nginx.conf
+    fi
     restart_nginx
 }
 
@@ -268,12 +271,12 @@ restart_nginx(){
     /usr/local/nginx/sbin/nginx -s reload
 }
 
-#install_init
+install_init
 install_nginx
-#install_php
-#install_php_extend_redis
-#install_php_extend_swoole
-#install_php_extend_igbinary
-#install_php_extend_memcache
-#install_php_extend_mongo
-#install_php_extend_mongodb
+install_php
+install_php_extend_redis
+install_php_extend_swoole
+install_php_extend_igbinary
+install_php_extend_memcache
+install_php_extend_mongo
+install_php_extend_mongodb
