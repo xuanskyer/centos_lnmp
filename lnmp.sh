@@ -4,6 +4,18 @@
 profile_path='/etc/profile'
 custom_setting_file='/etc/my_custom_profile'
 # 软件源列表
+## 本地软件包列表
+local_nginx_source='./packages/nginx-1.8.1.tar.gz'
+local_mysql_source='./packages/mariadb-10.1.21.tar.gz'
+local_php_source='./packages/php-5.6.30.tar.gz'
+local_php_ext_redis_source='./packages/redis-2.2.7.tgz'
+local_php_ext_memcache_source='./packages/memcache-2.2.7.tgz'
+local_php_ext_igbinary_source='./packages/igbinary-1.2.1.tgz'
+local_php_ext_swoole_source='./packages/v1.9.2-stable.tar.gz'
+local_php_ext_mongo_source='./packages/mongo-1.6.13.tgz'
+local_php_ext_mongodb_source='./packages/mongodb-1.1.5.tgz'
+
+## 远程源列表
 nginx_source='http://nginx.org/download/nginx-1.8.1.tar.gz'
 mysql_source='https://mirrors.tuna.tsinghua.edu.cn/mariadb//mariadb-10.1.21/source/mariadb-10.1.21.tar.gz'
 php_source='http://cn2.php.net/distributions/php-5.6.30.tar.gz'
@@ -33,13 +45,13 @@ install_info(){
     echo -e "\E[1;33m=  php-swoole     : v1.9.2-stable  =\E[1;33m";
     echo -e "\E[1;33m=  php-mongo      : 1.6.13         =\E[1;33m";
     echo -e "\E[1;33m=  php-mongodb    : 1.1.5          =\E[1;33m";
+    echo -e "\E[1;33m=  mysql          : 5.7            =\E[1;33m";
     echo -e "\E[1;33m====================================\r\n\E[1;33m";
 }
 
 install_init(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r\n";
 
-    yum update -y
     yum install -y epel-release \
         wget \
         libmcrypt \
@@ -93,7 +105,10 @@ install_init(){
         libmcrypt-devel \
         mcrypt \
         git \
-        mhash
+        mhash \
+        numactl \
+        ca-certificates
+    yum update -y
 
     if [ ! -d "${source_download_path}" ]; then
         `mkdir ${source_download_path}`
@@ -140,10 +155,6 @@ install_nginx(){
         sed "${nginx_conf_line_count} iinclude  vhost/*.conf;" -i ${nginx_prefix}/conf/nginx.conf
     fi
     restart_nginx
-}
-
-install_mysql(){
-    echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r\n";
 }
 
 install_php(){
@@ -320,6 +331,19 @@ install_php_extend_mongodb(){
     restart_php_fpm
 }
 
+install_mysql(){
+
+    echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
+    wget http://repo.mysql.com//mysql57-community-release-el6-9.noarch.rpm \
+    && rpm -i mysql57-community-release-el6-9.noarch.rpm \
+    && yum install -y mysql-community-server \
+    && sudo service mysqld start \
+    && sudo service mysqld status
+    # 显示初始化密码
+    echo -e "\r\n\E[1;33m mysql初始密码查看：`sudo grep 'temporary password' /var/log/mysqld.log`\E[0m\r";
+
+}
+
 restart_php_fpm(){
     php_fpm_count=`ps aux | grep php-fpm | grep -v 'grep' | wc -l`
     if [ ${php_fpm_count} -gt 0 ]; then
@@ -358,3 +382,5 @@ install_php_extend_memcache
 install_php_extend_mongo
 # 安装php扩展：mongodb
 install_php_extend_mongodb
+# 安装mysql
+install_mysql
