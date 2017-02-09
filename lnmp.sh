@@ -5,15 +5,15 @@ profile_path='/etc/profile'
 custom_setting_file='/etc/my_custom_profile'
 # 软件源列表
 ## 本地软件包列表
-local_nginx_source='./packages/nginx-1.8.1.tar.gz'
-local_mysql_source='./packages/mariadb-10.1.21.tar.gz'
-local_php_source='./packages/php-5.6.30.tar.gz'
-local_php_ext_redis_source='./packages/redis-2.2.7.tgz'
-local_php_ext_memcache_source='./packages/memcache-2.2.7.tgz'
-local_php_ext_igbinary_source='./packages/igbinary-1.2.1.tgz'
-local_php_ext_swoole_source='./packages/v1.9.2-stable.tar.gz'
-local_php_ext_mongo_source='./packages/mongo-1.6.13.tgz'
-local_php_ext_mongodb_source='./packages/mongodb-1.1.5.tgz'
+local_nginx_source='/./packages/nginx-1.8.1.tar.gz'
+local_mysql_source='/./packages/mariadb-10.1.21.tar.gz'
+local_php_source='/./packages/php-5.6.30.tar.gz'
+local_php_ext_redis_source='/./packages/redis-2.2.7.tgz'
+local_php_ext_memcache_source='/./packages/memcache-2.2.7.tgz'
+local_php_ext_igbinary_source='/./packages/igbinary-1.2.1.tgz'
+local_php_ext_swoole_source='/./packages/v1.9.2-stable.tar.gz'
+local_php_ext_mongo_source='/./packages/mongo-1.6.13.tgz'
+local_php_ext_mongodb_source='/./packages/mongodb-1.1.5.tgz'
 
 ## 远程源列表
 nginx_source='http://nginx.org/download/nginx-1.8.1.tar.gz'
@@ -137,7 +137,12 @@ install_nginx(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r\n";
     nginx_dir=`basename ${nginx_source} | sed -r 's/^(.*)\..*$/\1/g' | sed -r 's/^(.*)\..*$/\1/g'`
     cd ${source_download_path}
-    wget -O nginx.tar.gz ${nginx_source}
+    if [ -f `dirname $0`${local_nginx_source} ]; then
+        echo -e "\r\n\E[1;33m local install...\E[0m\r"
+        cp `dirname $0`${local_nginx_source} nginx.tar.gz
+    else
+        wget -O nginx.tar.gz ${nginx_source}
+    fi
     tar -zvx -f nginx.tar.gz
     cd ${source_download_path}/${nginx_dir}
     ./configure --prefix=${nginx_prefix} && make && make install
@@ -162,7 +167,14 @@ install_php(){
 
     cd ${source_download_path}
     php_dir=`basename ${php_source} | sed -r 's/^(.*)\..*$/\1/g' | sed -r 's/^(.*)\..*$/\1/g'`
-    `wget -O php.tar.gz ${php_source}`
+
+    if [ -f `dirname $0`${local_php_source} ]; then
+        echo -e "\r\n\E[1;33m local install...\E[0m\r"
+        cp `dirname $0`${local_php_source} php.tar.gz
+    else
+        `wget -O php.tar.gz ${php_source}`
+    fi
+
     `tar -zvx  -f php.tar.gz`
     cd ${source_download_path}/${php_dir}
     ./configure --prefix=${php_prefix} --with-config-file-path=/etc/php \
@@ -227,7 +239,13 @@ install_php_extend_redis(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
     cd ${source_download_path}
     php_redis_dir=`basename ${php_ext_redis_source} | sed -r 's/^(.*)\..*$/\1/g' `
-    `wget -O php_redis.tar.gz ${php_ext_redis_source}`
+
+    if [ -f `dirname $0`${local_php_ext_redis_source} ]; then
+        echo -e "\r\n\E[1;33m local install...\E[0m\r"
+        cp `dirname $0`${local_php_ext_redis_source} php_redis.tar.gz
+    else
+        `wget -O php_redis.tar.gz ${php_ext_redis_source}`
+    fi
     `tar -zvx  -f php_redis.tar.gz`
     cd ${source_download_path}/${php_redis_dir}
     source ${profile_path}
@@ -248,7 +266,13 @@ install_php_extend_swoole(){
         mkdir ${source_download_path}/php_swoole
     fi
     php_swoole_dir=`basename ${php_ext_swoole_source} | sed -r 's/^(.*)\..*$/\1/g' | sed -r 's/^(.*)\..*$/\1/g' `
-    `wget -O php_swoole.tar.gz ${php_ext_swoole_source}`
+    if [ -f `dirname $0`${local_php_ext_swoole_source} ]; then
+        echo -e "\r\n\E[1;33m local install...\E[0m\r"
+        cp `dirname $0`${local_php_ext_swoole_source} php_swoole.tar.gz
+    else
+        `wget -O php_swoole.tar.gz ${php_ext_swoole_source}`
+    fi
+
     `tar -zvx -C ${source_download_path}/php_swoole -f php_swoole.tar.gz`
     cd ${source_download_path}/php_swoole
     swoole_src_dir=`ls`
@@ -267,7 +291,12 @@ install_php_extend_igbinary(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
     cd ${source_download_path}
     php_igbinary_dir=`basename ${php_ext_igbinary_source} | sed -r 's/^(.*)\..*$/\1/g' `
-    `wget -O php_igbinary.tgz ${php_ext_igbinary_source}`
+    if [ -f `dirname $0`${local_php_ext_igbinary_source} ]; then
+        echo -e "\r\n\E[1;33m local install...\E[0m\r"
+        cp `dirname $0`${local_php_ext_igbinary_source} php_igbinary.tgz
+    else
+        `wget -O php_igbinary.tgz ${php_ext_igbinary_source}`
+    fi
     `tar -zvx  -f php_igbinary.tgz`
     cd ${source_download_path}/${php_igbinary_dir}
     source ${profile_path}
@@ -284,7 +313,12 @@ install_php_extend_memcache(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
     cd ${source_download_path}
     php_memcache_dir=`basename ${php_ext_memcache_source} | sed -r 's/^(.*)\..*$/\1/g' `
-    `wget -O php_memcache.tgz ${php_ext_memcache_source}`
+    if [ -f `dirname $0`${local_php_ext_memcache_source} ]; then
+        echo -e "\r\n\E[1;33m local install...\E[0m\r"
+        cp `dirname $0`${local_php_ext_memcache_source} php_memcache.tgz
+    else
+        `wget -O php_memcache.tgz ${php_ext_memcache_source}`
+    fi
     `tar -zvx  -f php_memcache.tgz`
     cd ${source_download_path}/${php_memcache_dir}
     source ${profile_path}
@@ -301,7 +335,12 @@ install_php_extend_mongo(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
     cd ${source_download_path}
     php_mongo_dir=`basename ${php_ext_mongo_source} | sed -r 's/^(.*)\..*$/\1/g' `
-    `wget -O php_mongo.tgz ${php_ext_mongo_source}`
+    if [ -f `dirname $0`${local_php_ext_mongo_source} ]; then
+        echo -e "\r\n\E[1;33m local install...\E[0m\r"
+        cp `dirname $0`${local_php_ext_mongo_source} php_mongo.tgz
+    else
+        `wget -O php_mongo.tgz ${php_ext_mongo_source}`
+    fi
     `tar -zvx  -f php_mongo.tgz`
     cd ${source_download_path}/${php_mongo_dir}
     source ${profile_path}
@@ -318,7 +357,12 @@ install_php_extend_mongodb(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
     cd ${source_download_path}
     php_mongodb_dir=`basename ${php_ext_mongodb_source} | sed -r 's/^(.*)\..*$/\1/g' `
-    `wget -O php_mongodb.tgz ${php_ext_mongodb_source}`
+    if [ -f `dirname $0`${local_php_ext_mongodb_source} ]; then
+        echo -e "\r\n\E[1;33m local install...\E[0m\r"
+        cp `dirname $0`${local_php_ext_mongodb_source} php_mongodb.tgz
+    else
+        `wget -O php_mongodb.tgz ${php_ext_mongodb_source}`
+    fi
     `tar -zvx  -f php_mongodb.tgz`
     cd ${source_download_path}/${php_mongodb_dir}
     source ${profile_path}
@@ -363,24 +407,24 @@ restart_nginx(){
 
 ######### 执行列表 ############
 # 安装软件列表说明
-install_info
-# 安装前系统初始化更新
-install_init
-# 安装nginx
+#install_info
+## 安装前系统初始化更新
+#install_init
+## 安装nginx
 install_nginx
-# 安装php
-install_php
-# 安装php扩展：redis
-install_php_extend_redis
-# 安装php扩展：swoole
-install_php_extend_swoole
-# 安装php扩展：igbinary
-install_php_extend_igbinary
-# 安装php扩展：memcache
-install_php_extend_memcache
-# 安装php扩展：mongo
-install_php_extend_mongo
-# 安装php扩展：mongodb
-install_php_extend_mongodb
-# 安装mysql
-install_mysql
+## 安装php
+#install_php
+## 安装php扩展：redis
+#install_php_extend_redis
+## 安装php扩展：swoole
+#install_php_extend_swoole
+## 安装php扩展：igbinary
+#install_php_extend_igbinary
+## 安装php扩展：memcache
+#install_php_extend_memcache
+## 安装php扩展：mongo
+#install_php_extend_mongo
+## 安装php扩展：mongodb
+#install_php_extend_mongodb
+## 安装mysql
+#install_mysql
