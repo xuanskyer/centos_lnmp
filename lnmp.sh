@@ -416,6 +416,7 @@ install_php_extend_mongodb(){
 install_mysql(){
 
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
+    `rpm -qa|grep mysql | xargs rpm -e --nodeps`
     if [ -f `dirname $0`${local_mysql_common_source} ] && [ -f `dirname $0`${local_mysql_libs_compat_source} ] && [ -f `dirname $0`${local_mysql_libs_source} ] && [ -f `dirname $0`${local_mysql_server_source} ] && [ -f `dirname $0`${local_mysql_client_source} ] ; then
         echo -e "\r\n\E[1;33m local install...\E[0m\r"
         rpm -ivh `dirname $0`${local_mysql_common_source} && \
