@@ -21,7 +21,7 @@ local_php_ext_mongodb_source='/./packages/php-ext/mongodb-1.1.5.tgz'
 
 ## 远程源列表
 nginx_source='http://nginx.org/download/nginx-1.8.1.tar.gz'
-mysql_source='https://mirrors.tuna.tsinghua.edu.cn/mariadb//mariadb-10.1.21/source/mariadb-10.1.21.tar.gz'
+mysql_source='http://repo.mysql.com//mysql57-community-release-el6-9.noarch.rpm'
 php_source='http://cn2.php.net/distributions/php-5.6.30.tar.gz'
 php_ext_redis_source='http://pecl.php.net/get/redis-2.2.7.tgz'
 php_ext_memcache_source='http://pecl.php.net/get/memcache-2.2.7.tgz'
@@ -427,7 +427,7 @@ install_mysql(){
         sudo service mysqld start && \
         sudo service mysqld status
     else
-        wget http://repo.mysql.com//mysql57-community-release-el6-9.noarch.rpm \
+        wget ${mysql_source} \
         && rpm -ivh mysql57-community-release-el6-9.noarch.rpm \
         && yum install -y mysql-community-server \
         && sudo service mysqld start \
