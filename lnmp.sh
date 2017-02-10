@@ -6,7 +6,7 @@ custom_setting_file='/etc/my_custom_profile'
 # 软件源列表
 ## 本地软件包列表
 local_nginx_source='/./packages/nginx-1.8.1.tar.gz'
-local_mysql_source='/./packages/mariadb-10.1.21.tar.gz'
+local_mysql_source='/./packages/mysql-community-5.7.17-1.el6.src.rpm'
 local_php_source='/./packages/php-5.6.30.tar.gz'
 local_php_ext_redis_source='/./packages/php-ext/redis-2.2.7.tgz'
 local_php_ext_memcache_source='/./packages/php-ext/memcache-2.2.7.tgz'
@@ -35,21 +35,39 @@ php_prefix='/usr/local/php'
 # mysql安装路径
 mysql_prefix='/usr/local/mysql'
 
-install_info(){
-    echo -e "\r\n\E[1;33m=============安装列表===============\E[1;33m";
-    echo -e "\E[1;33m=  nginx          : 1.8.1          =\E[1;33m";
-    echo -e "\E[1;33m=  php            : 5.6.30         =\E[1;33m";
-    echo -e "\E[1;33m=  php-redis      : 2.2.7          =\E[1;33m";
-    echo -e "\E[1;33m=  php-memcache   : 2.2.7          =\E[1;33m";
-    echo -e "\E[1;33m=  php-igbinary   : 1.2.1          =\E[1;33m";
-    echo -e "\E[1;33m=  php-swoole     : v1.9.2-stable  =\E[1;33m";
-    echo -e "\E[1;33m=  php-mongo      : 1.6.13         =\E[1;33m";
-    echo -e "\E[1;33m=  php-mongodb    : 1.1.5          =\E[1;33m";
-    echo -e "\E[1;33m=  mysql          : 5.7            =\E[1;33m";
-    echo -e "\E[1;33m====================================\r\n\E[1;33m";
+
+# 定义一些安装标记变量
+install_var_init(){
+    status_nginx_install='×'
+    status_php_install='×'
+    status_php_redis_install='×'
+    status_php_memcache_install='×'
+    status_php_igbinary_install='×'
+    status_php_swoole_install='×'
+    status_php_mongo_install='×'
+    status_php_mongodb_install='×'
+    status_mysql_install='×'
+
 }
 
-install_init(){
+install_info(){
+
+    echo -e "\r\n\E[1;33m==============安装列表================\E[1;33m";
+    echo -e "\E[1;33m=  nginx          : 1.8.1            =\E[1;33m";
+    echo -e "\E[1;33m=  php            : 5.6.30           =\E[1;33m";
+    echo -e "\E[1;33m=  php-redis      : 2.2.7            =\E[1;33m";
+    echo -e "\E[1;33m=  php-memcache   : 2.2.7            =\E[1;33m";
+    echo -e "\E[1;33m=  php-igbinary   : 1.2.1            =\E[1;33m";
+    echo -e "\E[1;33m=  php-swoole     : v1.9.2-stable    =\E[1;33m";
+    echo -e "\E[1;33m=  php-mongo      : 1.6.13           =\E[1;33m";
+    echo -e "\E[1;33m=  php-mongodb    : 1.1.5            =\E[1;33m";
+    echo -e "\E[1;33m=  mysql          : 5.7              =\E[1;33m";
+    echo -e "\E[1;33m======================================\r\n\E[1;33m";
+
+}
+
+
+install_yum_init(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r\n";
 
     yum install -y epel-release \
@@ -107,7 +125,8 @@ install_init(){
         git \
         mhash \
         numactl \
-        ca-certificates
+        ca-certificates \
+        postfix
     yum update -y
 
     if [ ! -d "${source_download_path}" ]; then
@@ -160,6 +179,8 @@ install_nginx(){
         sed "${nginx_conf_line_count} iinclude  vhost/*.conf;" -i ${nginx_prefix}/conf/nginx.conf
     fi
     restart_nginx
+    status_nginx_install='√'
+    echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
 install_php(){
@@ -233,6 +254,8 @@ install_php(){
     fi
 
     restart_php_fpm
+    status_php_install='√'
+    echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
 install_php_extend_redis(){
@@ -257,6 +280,8 @@ install_php_extend_redis(){
     fi
 
     restart_php_fpm
+    status_php_redis_install='√'
+    echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
 install_php_extend_swoole(){
@@ -285,6 +310,8 @@ install_php_extend_swoole(){
     source ${profile_path}
 
     restart_php_fpm
+    status_php_swoole_install='√'
+    echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
 install_php_extend_igbinary(){
@@ -307,6 +334,8 @@ install_php_extend_igbinary(){
         echo "extension=igbinary.so" >> /etc/php/php.ini
     fi
     restart_php_fpm
+    status_php_igbinary_install='√'
+    echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
 install_php_extend_memcache(){
@@ -329,6 +358,8 @@ install_php_extend_memcache(){
         echo "extension=memcache.so" >> /etc/php/php.ini
     fi
     restart_php_fpm
+    status_php_memcache_install='√'
+    echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
 install_php_extend_mongo(){
@@ -351,6 +382,8 @@ install_php_extend_mongo(){
         echo "extension=mongo.so" >> /etc/php/php.ini
     fi
     restart_php_fpm
+    status_php_mongo_install='√'
+    echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
 install_php_extend_mongodb(){
@@ -373,22 +406,32 @@ install_php_extend_mongodb(){
         echo "extension=mongodb.so" >> /etc/php/php.ini
     fi
     restart_php_fpm
+    status_php_mongodb_install='√'
+    echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
 install_mysql(){
 
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
-    wget http://repo.mysql.com//mysql57-community-release-el6-9.noarch.rpm \
-    && rpm -i mysql57-community-release-el6-9.noarch.rpm \
-    && yum install -y mysql-community-server \
-    && sudo service mysqld start \
-    && sudo service mysqld status
+    if [ -f `dirname $0`${local_mysql_source} ]; then
+        echo -e "\r\n\E[1;33m local install...\E[0m\r"
+        rpm -i `dirname $0`${local_mysql_source}
+    else
+        wget http://repo.mysql.com//mysql57-community-release-el6-9.noarch.rpm \
+        && rpm -i mysql57-community-release-el6-9.noarch.rpm \
+        && yum install -y mysql-community-server \
+        && sudo service mysqld start \
+        && sudo service mysqld status
+    fi
     # 显示初始化密码
     echo -e "\r\n\E[1;33m mysql初始密码查看：`sudo grep 'temporary password' /var/log/mysqld.log`\E[0m\r";
 
+    status_mysql_install='√'
+    echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
 restart_php_fpm(){
+    echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
     php_fpm_count=`ps aux | grep php-fpm | grep -v 'grep' | wc -l`
     if [ ${php_fpm_count} -gt 0 ]; then
         killall php-fpm
@@ -397,6 +440,7 @@ restart_php_fpm(){
 }
 
 restart_nginx(){
+    echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
     nginx_count=`ps aux | grep nginx | grep -v 'grep' | awk '{print $2}' | wc -l`
     if [ ${nginx_count} -gt 0 ]; then
         ps aux | grep nginx | grep -v 'grep' | awk '{print $2}' | xargs kill -9
@@ -405,26 +449,45 @@ restart_nginx(){
     /usr/local/nginx/sbin/nginx -s reload
 }
 
+
+installed_list(){
+    echo -e "\r\n\E[1;33m=============已安装列表===============\E[1;33m";
+    echo -e "\E[1;33m=  nginx          : 1.8.1         ${status_nginx_install} =\E[1;33m";
+    echo -e "\E[1;33m=  php            : 5.6.30        ${status_php_install} =\E[1;33m";
+    echo -e "\E[1;33m=  php-redis      : 2.2.7         ${status_php_redis_install} =\E[1;33m";
+    echo -e "\E[1;33m=  php-memcache   : 2.2.7         ${status_php_memcache_install} =\E[1;33m";
+    echo -e "\E[1;33m=  php-igbinary   : 1.2.1         ${status_php_igbinary_install} =\E[1;33m";
+    echo -e "\E[1;33m=  php-swoole     : v1.9.2-stable ${status_php_swoole_install} =\E[1;33m";
+    echo -e "\E[1;33m=  php-mongo      : 1.6.13        ${status_php_mongo_install} =\E[1;33m";
+    echo -e "\E[1;33m=  php-mongodb    : 1.1.5         ${status_php_mongodb_install} =\E[1;33m";
+    echo -e "\E[1;33m=  mysql          : 5.7           ${status_mysql_install} =\E[1;33m";
+    echo -e "\E[1;33m======================================\r\n\E[1;33m";
+}
+
 ######### 执行列表 ############
+# 安装前变量初始化
+install_var_init
 # 安装软件列表说明
-#install_info
+install_info
 ## 安装前系统初始化更新
-#install_init
+install_yum_init
 ## 安装nginx
 install_nginx
 ## 安装php
-#install_php
+install_php
 ## 安装php扩展：redis
-#install_php_extend_redis
+install_php_extend_redis
 ## 安装php扩展：swoole
-#install_php_extend_swoole
+install_php_extend_swoole
 ## 安装php扩展：igbinary
-#install_php_extend_igbinary
+install_php_extend_igbinary
 ## 安装php扩展：memcache
-#install_php_extend_memcache
+install_php_extend_memcache
 ## 安装php扩展：mongo
-#install_php_extend_mongo
+install_php_extend_mongo
 ## 安装php扩展：mongodb
-#install_php_extend_mongodb
+install_php_extend_mongodb
 ## 安装mysql
-#install_mysql
+install_mysql
+# 安装结束清单
+installed_list
