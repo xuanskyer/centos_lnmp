@@ -183,7 +183,9 @@ install_nginx(){
         sed "${nginx_conf_line_count} iinclude  vhost/*.conf;" -i ${nginx_prefix}/conf/nginx.conf
     fi
     restart_nginx
-    status_nginx_install='√'
+    if [ $? -eq 0 ]; then
+        status_nginx_install='√'
+    fi
     echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
@@ -258,7 +260,9 @@ install_php(){
     fi
 
     restart_php_fpm
-    status_php_install='√'
+    if [ $? -eq 0 ]; then
+        status_php_install='√'
+    fi
     echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
@@ -284,7 +288,9 @@ install_php_extend_redis(){
     fi
 
     restart_php_fpm
-    status_php_redis_install='√'
+    if [ $? -eq 0 ]; then
+        status_php_redis_install='√'
+    fi
     echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
@@ -314,7 +320,9 @@ install_php_extend_swoole(){
     source ${profile_path}
 
     restart_php_fpm
-    status_php_swoole_install='√'
+    if [ $? -eq 0 ]; then
+        status_php_swoole_install='√'
+    fi
     echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
@@ -338,7 +346,9 @@ install_php_extend_igbinary(){
         echo "extension=igbinary.so" >> /etc/php/php.ini
     fi
     restart_php_fpm
-    status_php_igbinary_install='√'
+    if [ $? -eq 0 ]; then
+        status_php_igbinary_install='√'
+    fi
     echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
@@ -362,7 +372,9 @@ install_php_extend_memcache(){
         echo "extension=memcache.so" >> /etc/php/php.ini
     fi
     restart_php_fpm
-    status_php_memcache_install='√'
+    if [ $? -eq 0 ]; then
+        status_php_memcache_install='√'
+    fi
     echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
@@ -386,7 +398,9 @@ install_php_extend_mongo(){
         echo "extension=mongo.so" >> /etc/php/php.ini
     fi
     restart_php_fpm
-    status_php_mongo_install='√'
+    if [ $? -eq 0 ]; then
+        status_php_mongo_install='√'
+    fi
     echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
@@ -410,7 +424,9 @@ install_php_extend_mongodb(){
         echo "extension=mongodb.so" >> /etc/php/php.ini
     fi
     restart_php_fpm
-    status_php_mongodb_install='√'
+    if [ $? -eq 0 ]; then
+        status_php_mongodb_install='√'
+    fi
     echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
@@ -439,8 +455,9 @@ install_mysql(){
     mysql_init_pass_string=`sudo grep 'temporary password' /var/log/mysqld.log`
     mysql_init_pass=${mysql_init_pass_string##*' '}
     echo -e "\r\n\E[1;33m mysql初始密码：${mysql_init_pass} \E[0m\r";
-
-    status_mysql_install='√'
+    if [ $? -eq 0 ]; then
+        status_mysql_install='√'
+    fi
     echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
 }
 
