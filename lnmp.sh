@@ -6,7 +6,11 @@ custom_setting_file='/etc/my_custom_profile'
 # 软件源列表
 ## 本地软件包列表
 local_nginx_source='/./packages/nginx-1.8.1.tar.gz'
-local_mysql_source='/./packages/mysql-community-5.7.17-1.el6.src.rpm'
+local_mysql_common_source='/./packages/mysql-5.7.16/mysql-community-common-5.7.16-1.el6.x86_64.rpm'
+local_mysql_libs_compat_source='/./packages/mysql-5.7.16/mysql-community-libs-compat-5.7.16-1.el6.x86_64.rpm'
+local_mysql_libs_source='/./packages/mysql-5.7.16/mysql-community-libs-5.7.16-1.el6.x86_64.rpm'
+local_mysql_server_source='/./packages/mysql-5.7.16/mysql-community-server-5.7.16-1.el6.x86_64.rpm'
+local_mysql_client_source='/./packages/mysql-5.7.16/mysql-community-client-5.7.16-1.el6.x86_64.rpm'
 local_php_source='/./packages/php-5.6.30.tar.gz'
 local_php_ext_redis_source='/./packages/php-ext/redis-2.2.7.tgz'
 local_php_ext_memcache_source='/./packages/php-ext/memcache-2.2.7.tgz'
@@ -47,7 +51,6 @@ install_var_init(){
     status_php_mongo_install='×'
     status_php_mongodb_install='×'
     status_mysql_install='×'
-
 }
 
 install_info(){
@@ -413,18 +416,27 @@ install_php_extend_mongodb(){
 install_mysql(){
 
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
-    if [ -f `dirname $0`${local_mysql_source} ]; then
+    if [ -f `dirname $0`${local_mysql_common_source} ] && [ -f `dirname $0`${local_mysql_libs_compat_source} ] && [ -f `dirname $0`${local_mysql_libs_source} ] && [ -f `dirname $0`${local_mysql_server_source} ] && [ -f `dirname $0`${local_mysql_client_source} ] ; then
         echo -e "\r\n\E[1;33m local install...\E[0m\r"
-        rpm -i `dirname $0`${local_mysql_source}
+        rpm -ivh `dirname $0`${local_mysql_common_source} && \
+        rpm -ivh `dirname $0`${local_mysql_libs_source} && \
+        rpm -ivh `dirname $0`${local_mysql_libs_compat_source} && \
+        rpm -ivh `dirname $0`${local_mysql_client_source} && \
+        rpm -ivh `dirname $0`${local_mysql_server_source} && \
+        sudo service mysqld start && \
+        sudo service mysqld status
     else
         wget http://repo.mysql.com//mysql57-community-release-el6-9.noarch.rpm \
-        && rpm -i mysql57-community-release-el6-9.noarch.rpm \
+        && rpm -ivh mysql57-community-release-el6-9.noarch.rpm \
         && yum install -y mysql-community-server \
         && sudo service mysqld start \
         && sudo service mysqld status
     fi
     # 显示初始化密码
-    echo -e "\r\n\E[1;33m mysql初始密码查看：`sudo grep 'temporary password' /var/log/mysqld.log`\E[0m\r";
+
+    mysql_init_pass_string=`sudo grep 'temporary password' /var/log/mysqld.log`
+    mysql_init_pass=${mysql_init_pass_string##*' '}
+    echo -e "\r\n\E[1;33m mysql初始密码：${mysql_init_pass} \E[0m\r";
 
     status_mysql_install='√'
     echo -e "\r\n\E[1;33m ${FUNCNAME} success!\E[0m\r\n";
@@ -469,25 +481,25 @@ installed_list(){
 install_var_init
 # 安装软件列表说明
 install_info
-## 安装前系统初始化更新
+# 安装前系统初始化更新
 install_yum_init
-## 安装nginx
+# 安装nginx
 install_nginx
-## 安装php
+# 安装php
 install_php
-## 安装php扩展：redis
+# 安装php扩展：redis
 install_php_extend_redis
-## 安装php扩展：swoole
+# 安装php扩展：swoole
 install_php_extend_swoole
-## 安装php扩展：igbinary
+# 安装php扩展：igbinary
 install_php_extend_igbinary
-## 安装php扩展：memcache
+# 安装php扩展：memcache
 install_php_extend_memcache
-## 安装php扩展：mongo
+# 安装php扩展：mongo
 install_php_extend_mongo
-## 安装php扩展：mongodb
+# 安装php扩展：mongodb
 install_php_extend_mongodb
-## 安装mysql
+# 安装mysql
 install_mysql
 # 安装结束清单
 installed_list
