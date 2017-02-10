@@ -42,6 +42,7 @@ mysql_prefix='/usr/local/mysql'
 
 # 定义一些安装标记变量
 install_var_init(){
+    start_time=`date +'%Y-%m-%d %H:%M:%S'`
     status_nginx_install='×'
     status_php_install='×'
     status_php_redis_install='×'
@@ -475,6 +476,7 @@ installed_list(){
     echo -e "\E[1;33m=  php-mongodb    : 1.1.5         ${status_php_mongodb_install} =\E[1;33m";
     echo -e "\E[1;33m=  mysql          : 5.7           ${status_mysql_install} =\E[1;33m";
     echo -e "\E[1;33m======================================\r\n\E[1;33m";
+    echo "运行时间：${start_time} - `date +'%Y-%m-%d %H:%M:%S'`"
 }
 
 ######### 执行列表 ############
