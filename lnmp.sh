@@ -492,7 +492,7 @@ installed_list(){
     echo -e "\E[1;33m=  php-mongo      : 1.6.13        ${status_php_mongo_install} =\E[1;33m";
     echo -e "\E[1;33m=  php-mongodb    : 1.1.5         ${status_php_mongodb_install} =\E[1;33m";
     echo -e "\E[1;33m=  mysql          : 5.7           ${status_mysql_install} =\E[1;33m";
-    echo -e "\E[1;33m======================================\r\n\E[1;33m";
+    echo -e "\E[1;33m======================================\r\n\e[0m";
     echo "运行时间：${start_time} - `date +'%Y-%m-%d %H:%M:%S'`"
 }
 
