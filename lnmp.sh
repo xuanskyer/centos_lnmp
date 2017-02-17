@@ -4,23 +4,26 @@
 profile_path='/etc/profile'
 custom_setting_file='/etc/my_custom_profile'
 # 软件源列表
+
 ## 本地软件包列表
-local_nginx_source='/./packages/nginx-1.8.1.tar.gz'
-local_mysql_common_source='/./packages/mysql-5.7.16/mysql-community-common-5.7.16-1.el6.x86_64.rpm'
-local_mysql_libs_compat_source='/./packages/mysql-5.7.16/mysql-community-libs-compat-5.7.16-1.el6.x86_64.rpm'
-local_mysql_libs_source='/./packages/mysql-5.7.16/mysql-community-libs-5.7.16-1.el6.x86_64.rpm'
-local_mysql_server_source='/./packages/mysql-5.7.16/mysql-community-server-5.7.16-1.el6.x86_64.rpm'
-local_mysql_client_source='/./packages/mysql-5.7.16/mysql-community-client-5.7.16-1.el6.x86_64.rpm'
-local_php_source='/./packages/php-5.6.30.tar.gz'
-local_php_ext_redis_source='/./packages/php-ext/redis-2.2.7.tgz'
-local_php_ext_memcache_source='/./packages/php-ext/memcache-2.2.7.tgz'
-local_php_ext_igbinary_source='/./packages/php-ext/igbinary-1.2.1.tgz'
-local_php_ext_swoole_source='/./packages/php-ext/swoole-v1.9.2-stable.tar.gz'
-local_php_ext_mongo_source='/./packages/php-ext/mongo-1.6.13.tgz'
-local_php_ext_mongodb_source='/./packages/php-ext/mongodb-1.1.5.tgz'
+
+cmd_dir="$( cd "$( dirname $0 )" && pwd )"
+local_nginx_source="${cmd_dir}/packages/nginx-1.10.3.tar.gz"
+local_mysql_common_source="${cmd_dir}/packages/mysql-5.7.16/mysql-community-common-5.7.16-1.el6.x86_64.rpm"
+local_mysql_libs_compat_source="${cmd_dir}/packages/mysql-5.7.16/mysql-community-libs-compat-5.7.16-1.el6.x86_64.rpm"
+local_mysql_libs_source="${cmd_dir}/packages/mysql-5.7.16/mysql-community-libs-5.7.16-1.el6.x86_64.rpm"
+local_mysql_server_source="${cmd_dir}/packages/mysql-5.7.16/mysql-community-server-5.7.16-1.el6.x86_64.rpm"
+local_mysql_client_source="${cmd_dir}/packages/mysql-5.7.16/mysql-community-client-5.7.16-1.el6.x86_64.rpm"
+local_php_source="${cmd_dir}/packages/php-5.6.30.tar.gz"
+local_php_ext_redis_source="${cmd_dir}/packages/php-ext/redis-2.2.7.tgz"
+local_php_ext_memcache_source="${cmd_dir}/packages/php-ext/memcache-2.2.7.tgz"
+local_php_ext_igbinary_source="${cmd_dir}/packages/php-ext/igbinary-1.2.1.tgz"
+local_php_ext_swoole_source="${cmd_dir}/packages/php-ext/swoole-v1.9.2-stable.tar.gz"
+local_php_ext_mongo_source="${cmd_dir}/packages/php-ext/mongo-1.6.13.tgz"
+local_php_ext_mongodb_source="${cmd_dir}/packages/php-ext/mongodb-1.1.5.tgz"
 
 ## 远程源列表
-nginx_source='http://nginx.org/download/nginx-1.8.1.tar.gz'
+nginx_source='https://nginx.org/download/nginx-1.10.3.tar.gz'
 mysql_source='http://repo.mysql.com//mysql57-community-release-el6-9.noarch.rpm'
 php_source='http://cn2.php.net/distributions/php-5.6.30.tar.gz'
 php_ext_redis_source='http://pecl.php.net/get/redis-2.2.7.tgz'
@@ -56,17 +59,17 @@ install_var_init(){
 
 install_info(){
 
-    echo -e "\r\n\E[1;33m==============安装列表================\E[1;33m";
-    echo -e "\E[1;33m=  nginx          : 1.8.1            =\E[1;33m";
-    echo -e "\E[1;33m=  php            : 5.6.30           =\E[1;33m";
-    echo -e "\E[1;33m=  php-redis      : 2.2.7            =\E[1;33m";
-    echo -e "\E[1;33m=  php-memcache   : 2.2.7            =\E[1;33m";
-    echo -e "\E[1;33m=  php-igbinary   : 1.2.1            =\E[1;33m";
-    echo -e "\E[1;33m=  php-swoole     : v1.9.2-stable    =\E[1;33m";
-    echo -e "\E[1;33m=  php-mongo      : 1.6.13           =\E[1;33m";
-    echo -e "\E[1;33m=  php-mongodb    : 1.1.5            =\E[1;33m";
-    echo -e "\E[1;33m=  mysql          : 5.7              =\E[1;33m";
-    echo -e "\E[1;33m======================================\r\n\E[1;33m";
+    echo -e "\r\n\E[1;33m==============安装列表================\e[0m";
+    echo -e "\E[1;33m=  nginx                             \e[0m";
+    echo -e "\E[1;33m=  php                               \e[0m";
+    echo -e "\E[1;33m=  php-redis                         \e[0m";
+    echo -e "\E[1;33m=  php-memcache                      \e[0m";
+    echo -e "\E[1;33m=  php-igbinary                      \e[0m";
+    echo -e "\E[1;33m=  php-swoole                        \e[0m";
+    echo -e "\E[1;33m=  php-mongo                         \e[0m";
+    echo -e "\E[1;33m=  php-mongodb                       \e[0m";
+    echo -e "\E[1;33m=  mysql                             \e[0m";
+    echo -e "\E[1;33m======================================\r\n\e[0m";
 
 }
 
@@ -158,17 +161,18 @@ fi" >> ${profile_path}
 
 install_nginx(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r\n";
-    nginx_dir=`basename ${nginx_source} | sed -r 's/^(.*)\..*$/\1/g' | sed -r 's/^(.*)\..*$/\1/g'`
+    version_nginx=`basename ${nginx_source} | sed -r 's/^(.*)\..*$/\1/g' | sed -r 's/^(.*)\..*$/\1/g'`
     cd ${source_download_path}
-    if [ -f `dirname $0`${local_nginx_source} ]; then
+    if [ -f ${local_nginx_source} ]; then
         echo -e "\r\n\E[1;33m local install...\E[0m\r"
-        cp `dirname $0`${local_nginx_source} nginx.tar.gz
+        cp ${local_nginx_source} nginx.tar.gz
     else
+        echo -e "\r\n\E[1;33m remote install...\E[0m\r"
         wget -O nginx.tar.gz ${nginx_source}
     fi
     tar -zvx -f nginx.tar.gz
-    cd ${source_download_path}/${nginx_dir}
-    ./configure --prefix=${nginx_prefix} && make && make install
+    cd ${source_download_path}/${version_nginx}
+    ./configure --prefix=${nginx_prefix}  --with-http_ssl_module && make && make install
 
 
     nginx_sbin_count=`cat ${custom_setting_file} | grep "export PATH=/usr/local/nginx/sbin:"'$PATH' | wc -l`
@@ -193,17 +197,18 @@ install_php(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r\n";
 
     cd ${source_download_path}
-    php_dir=`basename ${php_source} | sed -r 's/^(.*)\..*$/\1/g' | sed -r 's/^(.*)\..*$/\1/g'`
+    version_php=`basename ${php_source} | sed -r 's/^(.*)\..*$/\1/g' | sed -r 's/^(.*)\..*$/\1/g'`
 
-    if [ -f `dirname $0`${local_php_source} ]; then
+    if [ -f ${local_php_source} ]; then
         echo -e "\r\n\E[1;33m local install...\E[0m\r"
-        cp `dirname $0`${local_php_source} php.tar.gz
+        cp ${local_php_source} php.tar.gz
     else
+        echo -e "\r\n\E[1;33m remote install...\E[0m\r"
         `wget -O php.tar.gz ${php_source}`
     fi
 
     `tar -zvx  -f php.tar.gz`
-    cd ${source_download_path}/${php_dir}
+    cd ${source_download_path}/${version_php}
     ./configure --prefix=${php_prefix} --with-config-file-path=/etc/php \
         --enable-fpm \
         --enable-pcntl \
@@ -253,7 +258,7 @@ install_php(){
         `mkdir /etc/php`
     fi
     if [ ! -d "/etc/php/php.ini" ]; then
-        cp ${source_download_path}/${php_dir}/php.ini-development /etc/php/php.ini
+        cp ${source_download_path}/${version_php}/php.ini-development /etc/php/php.ini
     fi
     if [ ! -d "${php_prefix}/etc/php-fpm.conf" ]; then
         cp ${php_prefix}/etc/php-fpm.conf.default ${php_prefix}/etc/php-fpm.conf
@@ -269,16 +274,17 @@ install_php(){
 install_php_extend_redis(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
     cd ${source_download_path}
-    php_redis_dir=`basename ${php_ext_redis_source} | sed -r 's/^(.*)\..*$/\1/g' `
+    version_php_redis=`basename ${php_ext_redis_source} | sed -r 's/^(.*)\..*$/\1/g' `
 
-    if [ -f `dirname $0`${local_php_ext_redis_source} ]; then
+    if [ -f ${local_php_ext_redis_source} ]; then
         echo -e "\r\n\E[1;33m local install...\E[0m\r"
-        cp `dirname $0`${local_php_ext_redis_source} php_redis.tar.gz
+        cp ${local_php_ext_redis_source} php_redis.tar.gz
     else
+        echo -e "\r\n\E[1;33m remote install...\E[0m\r"
         `wget -O php_redis.tar.gz ${php_ext_redis_source}`
     fi
     `tar -zvx  -f php_redis.tar.gz`
-    cd ${source_download_path}/${php_redis_dir}
+    cd ${source_download_path}/${version_php_redis}
     source ${profile_path}
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
 
@@ -300,11 +306,12 @@ install_php_extend_swoole(){
     if [ ! -d "${source_download_path}/php_swoole" ]; then
         mkdir ${source_download_path}/php_swoole
     fi
-    php_swoole_dir=`basename ${php_ext_swoole_source} | sed -r 's/^(.*)\..*$/\1/g' | sed -r 's/^(.*)\..*$/\1/g' `
-    if [ -f `dirname $0`${local_php_ext_swoole_source} ]; then
+    version_php_swoole=`basename ${php_ext_swoole_source} | sed -r 's/^(.*)\..*$/\1/g' | sed -r 's/^(.*)\..*$/\1/g' `
+    if [ -f ${local_php_ext_swoole_source} ]; then
         echo -e "\r\n\E[1;33m local install...\E[0m\r"
-        cp `dirname $0`${local_php_ext_swoole_source} php_swoole.tar.gz
+        cp ${local_php_ext_swoole_source} php_swoole.tar.gz
     else
+        echo -e "\r\n\E[1;33m remote install...\E[0m\r"
         `wget -O php_swoole.tar.gz ${php_ext_swoole_source}`
     fi
 
@@ -329,15 +336,16 @@ install_php_extend_swoole(){
 install_php_extend_igbinary(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
     cd ${source_download_path}
-    php_igbinary_dir=`basename ${php_ext_igbinary_source} | sed -r 's/^(.*)\..*$/\1/g' `
-    if [ -f `dirname $0`${local_php_ext_igbinary_source} ]; then
+    version_php_igbinary=`basename ${php_ext_igbinary_source} | sed -r 's/^(.*)\..*$/\1/g' `
+    if [ -f ${local_php_ext_igbinary_source} ]; then
         echo -e "\r\n\E[1;33m local install...\E[0m\r"
-        cp `dirname $0`${local_php_ext_igbinary_source} php_igbinary.tgz
+        cp ${local_php_ext_igbinary_source} php_igbinary.tgz
     else
+        echo -e "\r\n\E[1;33m remote install...\E[0m\r"
         `wget -O php_igbinary.tgz ${php_ext_igbinary_source}`
     fi
     `tar -zvx  -f php_igbinary.tgz`
-    cd ${source_download_path}/${php_igbinary_dir}
+    cd ${source_download_path}/${version_php_igbinary}
     source ${profile_path}
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
 
@@ -355,15 +363,16 @@ install_php_extend_igbinary(){
 install_php_extend_memcache(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
     cd ${source_download_path}
-    php_memcache_dir=`basename ${php_ext_memcache_source} | sed -r 's/^(.*)\..*$/\1/g' `
-    if [ -f `dirname $0`${local_php_ext_memcache_source} ]; then
+    version_php_memcache=`basename ${php_ext_memcache_source} | sed -r 's/^(.*)\..*$/\1/g' `
+    if [ -f ${local_php_ext_memcache_source} ]; then
         echo -e "\r\n\E[1;33m local install...\E[0m\r"
-        cp `dirname $0`${local_php_ext_memcache_source} php_memcache.tgz
+        cp ${local_php_ext_memcache_source} php_memcache.tgz
     else
+        echo -e "\r\n\E[1;33m remote install...\E[0m\r"
         `wget -O php_memcache.tgz ${php_ext_memcache_source}`
     fi
     `tar -zvx  -f php_memcache.tgz`
-    cd ${source_download_path}/${php_memcache_dir}
+    cd ${source_download_path}/${version_php_memcache}
     source ${profile_path}
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
 
@@ -381,15 +390,16 @@ install_php_extend_memcache(){
 install_php_extend_mongo(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
     cd ${source_download_path}
-    php_mongo_dir=`basename ${php_ext_mongo_source} | sed -r 's/^(.*)\..*$/\1/g' `
-    if [ -f `dirname $0`${local_php_ext_mongo_source} ]; then
+    version_php_mongo=`basename ${php_ext_mongo_source} | sed -r 's/^(.*)\..*$/\1/g' `
+    if [ -f ${local_php_ext_mongo_source} ]; then
         echo -e "\r\n\E[1;33m local install...\E[0m\r"
-        cp `dirname $0`${local_php_ext_mongo_source} php_mongo.tgz
+        cp ${local_php_ext_mongo_source} php_mongo.tgz
     else
+        echo -e "\r\n\E[1;33m remote install...\E[0m\r"
         `wget -O php_mongo.tgz ${php_ext_mongo_source}`
     fi
     `tar -zvx  -f php_mongo.tgz`
-    cd ${source_download_path}/${php_mongo_dir}
+    cd ${source_download_path}/${version_php_mongo}
     source ${profile_path}
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
 
@@ -407,15 +417,16 @@ install_php_extend_mongo(){
 install_php_extend_mongodb(){
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
     cd ${source_download_path}
-    php_mongodb_dir=`basename ${php_ext_mongodb_source} | sed -r 's/^(.*)\..*$/\1/g' `
-    if [ -f `dirname $0`${local_php_ext_mongodb_source} ]; then
+    version_php_mongodb=`basename ${php_ext_mongodb_source} | sed -r 's/^(.*)\..*$/\1/g' `
+    if [ -f ${local_php_ext_mongodb_source} ]; then
         echo -e "\r\n\E[1;33m local install...\E[0m\r"
-        cp `dirname $0`${local_php_ext_mongodb_source} php_mongodb.tgz
+        cp ${local_php_ext_mongodb_source} php_mongodb.tgz
     else
+        echo -e "\r\n\E[1;33m remote install...\E[0m\r"
         `wget -O php_mongodb.tgz ${php_ext_mongodb_source}`
     fi
     `tar -zvx  -f php_mongodb.tgz`
-    cd ${source_download_path}/${php_mongodb_dir}
+    cd ${source_download_path}/${version_php_mongodb}
     source ${profile_path}
     ${php_prefix}/bin/phpize && ./configure --prefix=${php_prefix} && make && make install
 
@@ -434,16 +445,22 @@ install_mysql(){
 
     echo -e "\r\n\E[1;33m ${FUNCNAME}...\E[0m\r";
     `rpm -qa|grep mysql | xargs rpm -e --nodeps`
-    if [ -f `dirname $0`${local_mysql_common_source} ] && [ -f `dirname $0`${local_mysql_libs_compat_source} ] && [ -f `dirname $0`${local_mysql_libs_source} ] && [ -f `dirname $0`${local_mysql_server_source} ] && [ -f `dirname $0`${local_mysql_client_source} ] ; then
+    echo ${local_mysql_common_source}
+    echo ${local_mysql_libs_compat_source}
+    echo ${local_mysql_libs_source}
+    echo ${local_mysql_server_source}
+    echo ${local_mysql_client_source}
+    if [ -f ${local_mysql_common_source} ] && [ -f ${local_mysql_libs_compat_source} ] && [ -f ${local_mysql_libs_source} ] && [ -f ${local_mysql_server_source} ] && [ -f ${local_mysql_client_source} ] ; then
         echo -e "\r\n\E[1;33m local install...\E[0m\r"
-        rpm -ivh `dirname $0`${local_mysql_common_source} && \
-        rpm -ivh `dirname $0`${local_mysql_libs_source} && \
-        rpm -ivh `dirname $0`${local_mysql_libs_compat_source} && \
-        rpm -ivh `dirname $0`${local_mysql_client_source} && \
-        rpm -ivh `dirname $0`${local_mysql_server_source} && \
+        rpm -ivh ${local_mysql_common_source} && \
+        rpm -ivh ${local_mysql_libs_source} && \
+        rpm -ivh ${local_mysql_libs_compat_source} && \
+        rpm -ivh ${local_mysql_client_source} && \
+        rpm -ivh ${local_mysql_server_source} && \
         sudo service mysqld start && \
         sudo service mysqld status
     else
+        echo -e "\r\n\E[1;33m remote install...\E[0m\r"
         wget ${mysql_source} \
         && rpm -ivh mysql57-community-release-el6-9.noarch.rpm \
         && yum install -y mysql-community-server \
@@ -482,16 +499,16 @@ restart_nginx(){
 
 
 installed_list(){
-    echo -e "\r\n\E[1;33m=============已安装列表===============\E[1;33m";
-    echo -e "\E[1;33m=  nginx          : 1.8.1         ${status_nginx_install} =\E[1;33m";
-    echo -e "\E[1;33m=  php            : 5.6.30        ${status_php_install} =\E[1;33m";
-    echo -e "\E[1;33m=  php-redis      : 2.2.7         ${status_php_redis_install} =\E[1;33m";
-    echo -e "\E[1;33m=  php-memcache   : 2.2.7         ${status_php_memcache_install} =\E[1;33m";
-    echo -e "\E[1;33m=  php-igbinary   : 1.2.1         ${status_php_igbinary_install} =\E[1;33m";
-    echo -e "\E[1;33m=  php-swoole     : v1.9.2-stable ${status_php_swoole_install} =\E[1;33m";
-    echo -e "\E[1;33m=  php-mongo      : 1.6.13        ${status_php_mongo_install} =\E[1;33m";
-    echo -e "\E[1;33m=  php-mongodb    : 1.1.5         ${status_php_mongodb_install} =\E[1;33m";
-    echo -e "\E[1;33m=  mysql          : 5.7           ${status_mysql_install} =\E[1;33m";
+    echo -e "\r\n\E[1;33m=============已安装列表===============\e[0m";
+    echo -e "\E[1;33m=  ${version_nginx}         ${status_nginx_install} \e[0m";
+    echo -e "\E[1;33m=  ${version_php}        ${status_php_install} \e[0m";
+    echo -e "\E[1;33m=  ${version_php_redis}         ${status_php_redis_install} \e[0m";
+    echo -e "\E[1;33m=  ${version_php_memcache}         ${status_php_memcache_install} \e[0m";
+    echo -e "\E[1;33m=  ${version_php_igbinary}         ${status_php_igbinary_install} \e[0m";
+    echo -e "\E[1;33m=  ${version_php_swoole}      ${status_php_swoole_install} \e[0m";
+    echo -e "\E[1;33m=  ${version_php_mongo}        ${status_php_mongo_install} \e[0m";
+    echo -e "\E[1;33m=  ${version_php_mongodb}         ${status_php_mongodb_install} \e[0m";
+    echo -e "\E[1;33m=  mysql          : 5.7           ${status_mysql_install} \e[0m";
     echo -e "\E[1;33m======================================\r\n\e[0m";
     echo "运行时间：${start_time} - `date +'%Y-%m-%d %H:%M:%S'`"
 }
