@@ -502,15 +502,16 @@ installed_list(){
     echo -e "\r\n\E[1;33m=============已安装列表===============\e[0m";
     echo -e "\E[1;33m=  ${version_nginx}         ${status_nginx_install} \e[0m";
     echo -e "\E[1;33m=  ${version_php}        ${status_php_install} \e[0m";
-    echo -e "\E[1;33m=  ${version_php_redis}         ${status_php_redis_install} \e[0m";
-    echo -e "\E[1;33m=  ${version_php_memcache}         ${status_php_memcache_install} \e[0m";
-    echo -e "\E[1;33m=  ${version_php_igbinary}         ${status_php_igbinary_install} \e[0m";
-    echo -e "\E[1;33m=  ${version_php_swoole}      ${status_php_swoole_install} \e[0m";
-    echo -e "\E[1;33m=  ${version_php_mongo}        ${status_php_mongo_install} \e[0m";
-    echo -e "\E[1;33m=  ${version_php_mongodb}         ${status_php_mongodb_install} \e[0m";
+    echo -e "\E[1;33m=  PHP扩展安装列表： \e[0m";
+    echo -e "\E[1;33m=      ${version_php_redis}         ${status_php_redis_install} \e[0m";
+    echo -e "\E[1;33m=      ${version_php_memcache}         ${status_php_memcache_install} \e[0m";
+    echo -e "\E[1;33m=      ${version_php_igbinary}         ${status_php_igbinary_install} \e[0m";
+    echo -e "\E[1;33m=      ${version_php_swoole}      ${status_php_swoole_install} \e[0m";
+    echo -e "\E[1;33m=      ${version_php_mongo}        ${status_php_mongo_install} \e[0m";
+    echo -e "\E[1;33m=      ${version_php_mongodb}         ${status_php_mongodb_install} \e[0m";
     echo -e "\E[1;33m=  mysql          : 5.7           ${status_mysql_install} \e[0m";
     echo -e "\E[1;33m======================================\r\n\e[0m";
-    echo "运行时间：${start_time} - `date +'%Y-%m-%d %H:%M:%S'`"
+    echo -e "\E[1;33m  运行时间：${start_time} - `date +'%Y-%m-%d %H:%M:%S'`\r\n\e[0m"
 }
 
 ######### 执行列表 ############
